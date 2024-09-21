@@ -1,27 +1,49 @@
-import React, { useEffect, useState } from 'react';
-import { fetchEmployees } from './api';
-import EmployeeForm from './components/EmployeeForm';
-import EmployeeList from './components/EmployeeList';
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Header from "./components/Header";
+import Dashboard from "./pages/Dashboard";
+import EmployeeDetails from "./pages/EmployeeDetails";
+import EditEmployee from "./pages/EditEmployee"; // Import the edit component
+import Login from "./components/Login";
+import Register from "./components/Register";
+import PrivateRoute from "./utils/PrivateRoute";
 
 const App = () => {
-    const [employees, setEmployees] = useState([]);
-
-    const getEmployees = async () => {
-        const data = await fetchEmployees();
-        setEmployees(data);
-    };
-
-    useEffect(() => {
-        getEmployees();
-    }, []);
-
-    return (
-        <div>
-            <h1>Employee Management System</h1>
-            <EmployeeForm fetchEmployees={getEmployees} />
-            <EmployeeList employees={employees} fetchEmployees={getEmployees} />
-        </div>
-    );
+  return (
+    <Router>
+      <Header />
+      <div className="container">
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/employee/:id"
+            element={
+              <PrivateRoute>
+                <EmployeeDetails />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/edit/:id"
+            element={
+              <PrivateRoute>
+                <EditEmployee />
+              </PrivateRoute>
+            }
+          />
+        </Routes>
+      </div>
+    </Router>
+  );
 };
 
 export default App;
